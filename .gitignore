@@ -1,0 +1,8 @@
+# Jetbrains
+.idea/
+
+# Enviornment stuff
+.env
+
+# Loggers
+*.log
