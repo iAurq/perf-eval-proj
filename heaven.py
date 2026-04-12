@@ -1,8 +1,10 @@
 import os
+import sys
 import time
 import subprocess
 import logging
 import psutil
+import pyautogui
 import pyautogui as autogui
 from dotenv import load_dotenv
 
@@ -13,7 +15,7 @@ autogui.FAILSAFE = True
 # Logger setup
 logging.basicConfig(
     filename='main.log',
-    format='%(asctime)s %(levelname)s: %(message)s',
+    format='%(asctime)s %(filename)s %(levelname)s: %(message)s',
     filemode='w'
 )
 logger = logging.getLogger(__name__)
@@ -41,7 +43,18 @@ def start_heaven_benchmark():
     then close it.
     """
     logger.debug("Clicking launcher Run button...")
-    autogui.click('images/run.png')
+    attempts = 10
+    found = False
+    while attempts > 0:
+        try:
+            autogui.click('images/run.png')
+            found = True
+        except pyautogui.ImageNotFoundException:
+            attempts -= 1
+            time.sleep(3)
+    if not found:
+        logger.error('Could not find the heaven start benchmark after 10 attempts.')
+        sys.exit()
     time.sleep(1)
 
     wait_for_exe('Heaven.exe')
@@ -91,20 +104,3 @@ if __name__ == '__main__':
     open_heaven_benchmark()
     start_heaven_benchmark()
     close_heaven_benchmark()
-
-# TODO(YAHIR): Convert the power script
-# echo "Starting NVIDIA-SMI..."
-# ($1) &
-# nvpid=$!
-# echo "Sleeping for a while..."
-# sleep 10
-# echo "Launching application..."
-# ($2) &
-# appid=$!
-# wait "$appid"
-# echo "Application exited, sleeping for a while..."
-# sleep 10
-# echo "Ending NVIDIA-SMI..."
-# kill "$nvpid"
-# echo "Making sure CSV dump is completed, sleeping again..."
-# sleep 60

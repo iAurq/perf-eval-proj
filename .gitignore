@@ -6,3 +6,6 @@
 
 # Loggers
 *.log
+
+# Data stuff
+data/
