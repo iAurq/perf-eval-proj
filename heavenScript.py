@@ -1,11 +1,12 @@
 #!/usr/bin/env python3          # use python3 to run this script
 
-import pyautogui as pag
-import pygetwindow as gw
-import subprocess
-import time
 import os
-import sys
+import time
+import subprocess
+import logging
+import psutil
+import pyautogui as autogui
+from dotenv import load_dotenv
 from datetime import datetime
 
 # buttons and their options (default option is the first) idea is to use image rec to find dropdown menu options and keystrokes to confirm
@@ -14,4 +15,67 @@ from datetime import datetime
 # qualityButton options: low, medium, high, ultra
 # tessellationButton options: disabled, moderate, normal, extreme
 
+
+autogui.FAILSAFE = True  # Enable fail-safe mode to allow moving the mouse to the corner to stop the script
+autogui.PAUSE = 1  # 1 sec pause after each pyautogui call
+
+logFilename = f"heaven_script_log_{datetime.now().strftime('%Y-%m-%d_%H%M%S')}.log"
+
+logging.basicConfig(
+    filename=logFilename,
+    format='%(asctime)s - %(levelname)s: %(message)s',
+    filemode='w',
+    level=logging.DEBUG
+)
+
+logger = logging.getLogger(__name__)
+
+console = logging.StreamHandler()
+console.setLevel(logging.DEBUG)
+console.setFormatter(logging.Formatter('[%(asctime)s] %(levelname)s: %(message)s',  datefmt='%H:%M:%S'))
+logger.addHandler(console)
+
+load_dotenv('tyler.env')
+
+runButton = "images/run.png"
+aaButton = "images/aa.png"
+apiButton = "images/api.png"
+qualityButton = "images/quality.png"
+tessellationButton = "images/tessellation.png"
+
+# settings for run, change for options wanted
+settings = {
+    "aa": "off",                # off, 2x, 4x, 8x
+    "api": "directX11",         # directX11, directX9, OpenGL
+    "quality": "low",           # low, medium, high, ultra
+    "tessellation": "disabled"  # disabled, moderate, normal, extreme
+
+}
+
+aaMap = {
+    0: "off",
+    1: "2x",
+    2: "4x",
+    3: "8x"
+}
+
+apiMap = {
+    0: "directX11",
+    1: "directX9",
+    2: "OpenGL"
+}
+
+qualityMap = {
+    0: "low",
+    1: "medium",
+    2: "high",
+    3: "ultra"
+}
+
+tessellationMap = {
+    0: "disabled",
+    1: "moderate",
+    2: "normal",
+    3: "extreme"
+}
 
