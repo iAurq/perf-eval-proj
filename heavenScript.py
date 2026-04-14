@@ -79,3 +79,61 @@ tessellationMap = {
     3: "extreme"
 }
 
+CONFIDENCE_THRESHOLD = 0.85 # for image rec, adjust (higher = stricter)
+
+# --- waiting for process to exist ---
+def waitForProcess(procName: str):
+    logger.info(f'Waiting for {procName} to exist...')
+    while True:
+        for proc in psutil.process_iter(['name']):
+            if proc.info['name'].lower() == procName.lower():
+                logger.info(f'{procName} detected!')
+                return
+        time.sleep(1)
+
+# --- kill proc ---
+def killProcess(procName: str):
+    logger.info(f'Killing {procName}...')
+    killed = False
+    for proc in psutil.process_iter(['name']):
+        if proc.info['name'].lower() == procName.lower():
+            try:
+                proc.kill()  # or proc.terminate() for graceful shutdown
+                killed = True
+                logger.info(f'Killed PID {proc.pid}')
+            except (psutil.NoSuchProcess, psutil.AccessDenied) as e:
+                logger.error(f'Failed to kill {proc.pid}: {e}')
+    
+    if not killed:
+        logger.warning(f'No {procName} process found')
+    time.sleep(2)
+
+# --- wait for image ---
+def waitForImage(img, timeout=30, confidence=CONFIDENCE_THRESHOLD):
+    logger.debug(f'Waiting for image: {img}')
+    start = time.time()
+    while time.time() - start < timeout:
+        location = autogui.locateOnScreen(img, confidence=confidence)
+        if location:
+            return autogui.center(location) # gives xy coord for center 
+        time.sleep(0.5)
+    raise TimeoutError(f'Image not found within {timeout}s: {img}')
+
+# --- click func ---
+def click(img, timeout=30, confidence=CONFIDENCE_THRESHOLD):
+    point = waitForImage(img, timeout, confidence)
+    autogui.click(point.x, point.y)
+    return point
+
+
+# --- dropdown func ---
+def dropdown(buttonImage, presses):
+     
+
+
+def main():
+    #placeholder
+
+
+if __name__ == "__main__":
+    main()
