@@ -1,3 +1,6 @@
 psutil
+pandas
+plotly
 dotenv
+kaleido
 PyAutoGUI

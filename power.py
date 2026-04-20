@@ -1,4 +1,5 @@
 import os
+import argparse
 import time
 import sys
 import logging
@@ -77,9 +78,13 @@ class Power(object):
         self.close_power()
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description="Power.py")
+    parser.add_argument('--test', type=str, default='test', help='Test name')
+    args = parser.parse_args()
+
     test = Power()
-    test.open_power('plz2')
-    # time.sleep(5)
+    test.open_power(args.test)
+    time.sleep(5)
     h.open_heaven_benchmark()
     h.start_heaven_benchmark()
     h.close_heaven_benchmark()

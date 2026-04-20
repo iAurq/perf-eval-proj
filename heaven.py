@@ -45,13 +45,13 @@ def start_heaven_benchmark():
     logger.debug("Clicking launcher Run button...")
     attempts = 10
     found = False
-    while attempts > 0:
+    while attempts > 0 and not found:
         try:
             autogui.click('images/run.png')
             found = True
         except pyautogui.ImageNotFoundException:
             attempts -= 1
-            time.sleep(3)
+            time.sleep(1)
     if not found:
         logger.error('Could not find the heaven start benchmark after 10 attempts.')
         sys.exit()
@@ -65,11 +65,25 @@ def start_heaven_benchmark():
     logger.info("Starting the benchmark...")
     autogui.press('f9')
 
+    time.sleep(4*60) # It takes about 4 minutes #FIXME
+    attempts = 10
+    found = False
+    while attempts > 0 and not found:
+        try:
+            autogui.click('images/done.png')
+            found = True
+        except pyautogui.ImageNotFoundException:
+            attempts -= 1
+            time.sleep(3)
+    if not found:
+        logger.error('Could not find the heaven start benchmark after 10 attempts.')
+        sys.exit()
+
     time.sleep(5) #FIXME
     logger.info("Benchmark ~finished.")
 
     logger.info("Closing all systems...")
-    os.system('taskkill /f /im heaven.exe /t')
+    subprocess.run('taskkill /f /im heaven.exe /t')
 
 
 def open_heaven_benchmark():
@@ -97,7 +111,7 @@ def close_heaven_benchmark():
     """
     Close Heaven Benchmark Launcher
     """
-    os.system('taskkill /im browser_x86.exe')
+    subprocess.run('taskkill /im browser_x86.exe')
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
