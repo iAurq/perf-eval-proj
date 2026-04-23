@@ -4,3 +4,4 @@ plotly
 dotenv
 kaleido
 PyAutoGUI
+opencv-python

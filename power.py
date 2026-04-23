@@ -35,8 +35,8 @@ class Power(object):
         """
         try:
             self.process = subprocess.Popen(
-                "nvidia-smi --id=0 --query-gpu=timestamp,temperature.gpu,power.draw "
-                f"--format=csv --loop=1 --filename=data\\{file_name}.csv", #TODO: Should I add lms?
+                "nvidia-smi --id=0 --query-gpu=timestamp,temperature.gpu,power.draw,utilization.gpu,clocks.current.graphics,clocks.current.memory,clocks.current.sm"
+                f"--format=csv --loop-ms=500 --filename=data\\{file_name}.csv",
                 stdout=subprocess.PIPE,
                 shell=True,
                 creationflags=subprocess.CREATE_NEW_PROCESS_GROUP
@@ -60,7 +60,7 @@ class Power(object):
             time.sleep(1) # FIXME 10
             self.process.send_signal(signal.CTRL_BREAK_EVENT)
             logger.info('Giving time for csv dump')
-            time.sleep(3) #FIXME 60
+            time.sleep(10) #FIXME 60
             self.process.terminate()
             try:
                 self.process.wait(timeout=5)
