@@ -1,0 +1,8 @@
+timestamp, name, utilization.gpu [%], utilization.memory [%], memory.used [MiB], power.draw [W], temperature.gpu, clocks.current.graphics [MHz], clocks.current.memory [MHz]
+2026/04/24 00:35:31.969, NVIDIA GeForce RTX 4060 Laptop GPU, 39 %, 10 %, 1538 MiB, 27.01 W, 60, 1650 MHz, 8001 MHz
+2026/04/24 00:35:32.479, NVIDIA GeForce RTX 4060 Laptop GPU, 39 %, 10 %, 1538 MiB, 25.85 W, 60, 1650 MHz, 8001 MHz
+2026/04/24 00:35:32.994, NVIDIA GeForce RTX 4060 Laptop GPU, 39 %, 10 %, 1538 MiB, 26.83 W, 60, 1635 MHz, 8001 MHz
+2026/04/24 00:35:33.505, NVIDIA GeForce RTX 4060 Laptop GPU, 39 %, 10 %, 1538 MiB, 26.68 W, 60, 1620 MHz, 8001 MHz
+2026/04/24 00:35:34.018, NVIDIA GeForce RTX 4060 Laptop GPU, 39 %, 10 %, 1538 MiB, 26.74 W, 60, 1620 MHz, 8001 MHz
+2026/04/24 00:35:34.533, NVIDIA GeForce RTX 4060 Laptop GPU, 39 %, 10 %, 1538 MiB, 26.74 W, 60, 1605 MHz, 8001 MHz
+2026/04/24 00:35:35.048, NVIDIA GeForce RTX 4060 Laptop GPU, 39 %, 10 %, 1538 MiB, 26.04 W, 60, 1590 MHz, 8001 MHz
