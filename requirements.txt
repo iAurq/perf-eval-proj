@@ -1,3 +1,9 @@
 psutil
 dotenv
 PyAutoGUI
+pandas
+plotly
+dotenv
+kaleido
+PyAutoGUI
+opencv-python

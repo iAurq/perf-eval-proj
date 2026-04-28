@@ -37,9 +37,9 @@ def wait_for_exe(exe_name: str):
     logger.info(f'{exe_name} opened!!')
 
 
-def start_heaven_benchmark():
+def start_superposition_benchmark():
     """
-    Start Heaven Benchmark for set amount of time,
+    Start superposition Benchmark for set amount of time,
     then close it.
     """
     logger.debug("Clicking launcher Run button...")
@@ -47,30 +47,28 @@ def start_heaven_benchmark():
     found = False
     while attempts > 0 and not found:
         try:
-            autogui.click('images/run.png')
+            autogui.click('images/run_superposition.png')
             found = True
         except pyautogui.ImageNotFoundException:
             attempts -= 1
             time.sleep(1)
     if not found:
-        logger.error('Could not find the heaven start benchmark after 10 attempts.')
+        logger.error('Could not find the superposition start button after 10 attempts.')
         sys.exit()
     time.sleep(1)
 
-    wait_for_exe('Heaven.exe')
+    wait_for_exe('superposition.exe')
 
-    logger.info("Heaven.exe detected. Giving it time to load...")
-    time.sleep(10) #FIXME
+    logger.info("superposition.exe detected. Giving it time to load...")
+    time.sleep(15) #FIXME
 
-    logger.info("Starting the benchmark...")
-    autogui.press('f9')
-
-    time.sleep(4*60) # It takes about 4 minutes #FIXME
+    logger.info("Giving benchmark time to run (it starts automatically)...")
+    time.sleep(3*60) # It takes about 3 minutes #FIXME
     attempts = 10
     found = False
     while attempts > 0 and not found:
         try:
-            autogui.click('images/done.png')
+            autogui.locateOnScreen('images/done_superposition.png')
             found = True
         except pyautogui.ImageNotFoundException:
             attempts -= 1
@@ -82,39 +80,35 @@ def start_heaven_benchmark():
     time.sleep(5) #FIXME
     logger.info("Benchmark ~finished.")
 
-    logger.info("Closing all systems...")
-    subprocess.run('taskkill /f /im heaven.exe /t')
 
-
-def open_heaven_benchmark():
+def open_superposition_benchmark():
     """
-    Open Heaven Benchmark Launcher
+    Open superposition Benchmark Launcher
     """
     current_dir = os.getcwd() # Save dir so you can come back
     logger.debug(f'Current Directory: {current_dir}')
 
-    heaven_path = os.getenv('HEAVEN_PATH') + '\\bin'
+    superposition_path = os.getenv('SUPERPOSITION_PATH') + '\\bin'
     try:
-        os.chdir(heaven_path)
+        os.chdir(superposition_path)
         logger.debug(os.getcwd())
-        app = subprocess.Popen('browser_x86.exe -config ../data/launcher/launcher.xml',
+        app = subprocess.Popen('launcher.exe',
                                shell=True
                                )
-        wait_for_exe('browser_x86.exe')
+        wait_for_exe('launcher.exe')
         os.chdir(current_dir)
-        # app.kill()
     except Exception as e:
         logger.error(e)
 
 
-def close_heaven_benchmark():
+def close_superposition_benchmark():
     """
-    Close Heaven Benchmark Launcher
+    Close superposition Benchmark Launcher
     """
-    subprocess.run('taskkill /im browser_x86.exe')
+    subprocess.run('taskkill /im launcher.exe')
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    open_heaven_benchmark()
-    start_heaven_benchmark()
-    close_heaven_benchmark()
+    open_superposition_benchmark()
+    start_superposition_benchmark()
+    close_superposition_benchmark()

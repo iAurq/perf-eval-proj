@@ -9,3 +9,10 @@
 
 # Data stuff
 data/
+data/
+
+# python cache
+__pycache__/
+
+# sqlite (huge files)
+*.sqlite

@@ -1,4 +1,5 @@
 import os
+import argparse
 import time
 import sys
 import logging
@@ -34,8 +35,13 @@ class Power(object):
         """
         try:
             self.process = subprocess.Popen(
+<<<<<<< HEAD
                 "nvidia-smi --id=0 --query-gpu=timestamp,temperature.gpu,power.draw "
                 f"--format=csv --loop=1 --filename=data\\{file_name}.csv", #TODO: Should I add lms?
+=======
+                "nvidia-smi --id=0 --query-gpu=timestamp,temperature.gpu,power.draw,utilization.gpu,clocks.current.graphics,clocks.current.memory,clocks.current.sm"
+                f"--format=csv --loop-ms=500 --filename=data\\{file_name}.csv",
+>>>>>>> origin/main
                 stdout=subprocess.PIPE,
                 shell=True,
                 creationflags=subprocess.CREATE_NEW_PROCESS_GROUP
@@ -59,7 +65,11 @@ class Power(object):
             time.sleep(1) # FIXME 10
             self.process.send_signal(signal.CTRL_BREAK_EVENT)
             logger.info('Giving time for csv dump')
+<<<<<<< HEAD
             time.sleep(3) #FIXME 60
+=======
+            time.sleep(10) #FIXME 60
+>>>>>>> origin/main
             self.process.terminate()
             try:
                 self.process.wait(timeout=5)
@@ -77,9 +87,19 @@ class Power(object):
         self.close_power()
 
 if __name__ == '__main__':
+<<<<<<< HEAD
     test = Power()
     test.open_power('plz2')
     # time.sleep(5)
+=======
+    parser = argparse.ArgumentParser(description="Power.py")
+    parser.add_argument('--test', type=str, default='test', help='Test name')
+    args = parser.parse_args()
+
+    test = Power()
+    test.open_power(args.test)
+    time.sleep(5)
+>>>>>>> origin/main
     h.open_heaven_benchmark()
     h.start_heaven_benchmark()
     h.close_heaven_benchmark()
