@@ -47,7 +47,8 @@ def start_heaven_benchmark():
     found = False
     while attempts > 0 and not found:
         try:
-            autogui.click('images/run.png')
+            x, y = pyautogui.locateCenterOnScreen('images/run.png', confidence=0.8)
+            autogui.click(x, y)
             found = True
         except pyautogui.ImageNotFoundException:
             attempts -= 1
@@ -70,7 +71,8 @@ def start_heaven_benchmark():
     found = False
     while attempts > 0 and not found:
         try:
-            autogui.click('images/done.png')
+            x, y = pyautogui.locateCenterOnScreen('images/done.png', confidence=0.8)
+            autogui.click(x, y)
             found = True
         except pyautogui.ImageNotFoundException:
             attempts -= 1

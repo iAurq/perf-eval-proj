@@ -35,7 +35,7 @@ class Power(object):
         """
         try:
             self.process = subprocess.Popen(
-                "nvidia-smi --id=0 --query-gpu=timestamp,temperature.gpu,power.draw,utilization.gpu,clocks.current.graphics,clocks.current.memory,clocks.current.sm"
+                "nvidia-smi --id=0 --query-gpu=timestamp,temperature.gpu,power.draw,utilization.gpu,clocks.current.graphics,clocks.current.memory,clocks.current.sm,clocks_throttle_reasons.active "
                 f"--format=csv --loop-ms=500 --filename=data\\{file_name}.csv",
                 stdout=subprocess.PIPE,
                 shell=True,
@@ -78,14 +78,22 @@ class Power(object):
         self.close_power()
 
 if __name__ == '__main__':
+    os.makedirs('data', exist_ok=True)  # create data dir if missing
+
     parser = argparse.ArgumentParser(description="Power.py")
     parser.add_argument('--test', type=str, default='test', help='Test name')
     args = parser.parse_args()
 
+    print("Starting power monitoring...")
     test = Power()
     test.open_power(args.test)
+    print("Power monitoring started, opening heaven...")
     time.sleep(5)
     h.open_heaven_benchmark()
+    print("Heaven opened, starting benchmark...")
+    time.sleep(5)
     h.start_heaven_benchmark()
+    print("Benchmark done, closing...")
     h.close_heaven_benchmark()
     test.close_power()
+    print("Done!")

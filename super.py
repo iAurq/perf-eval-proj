@@ -47,7 +47,8 @@ def start_superposition_benchmark():
     found = False
     while attempts > 0 and not found:
         try:
-            autogui.click('images/run_superposition.png')
+            x, y = pyautogui.locateCenterOnScreen('images/run_superposition.png', confidence=0.8)
+            autogui.click(x, y)
             found = True
         except pyautogui.ImageNotFoundException:
             attempts -= 1
