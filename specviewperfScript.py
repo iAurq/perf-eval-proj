@@ -41,6 +41,7 @@ SPEC_EXE = "SPECviewperf-CLI.exe"
 OUTPUT_DIR = r"C:\Users\Aura\Documents\spring26\ece382n-21-performance_eval_benchmarking\FinalProj\outputs"
 RUN_NAME = datetime.now().strftime("%Y%m%d_%H%M%S")
 
+spec_exe_full = os.path.join(SPEC_DIR, SPEC_EXE)
 # Create output directory if it doesn't exist
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
@@ -67,7 +68,7 @@ def run_nvidia_smi_monitoring(output_file):
     process = subprocess.Popen(
         [
             "nvidia-smi",
-            "--query-gpu=timestamp,name,utilization.gpu,utilization.memory,memory.used,power.draw,temperature.gpu,clocks.gr,clocks.mem",
+            "--query-gpu=timestamp,name,utilization.gpu,utilization.memory,memory.used,power.draw,temperature.gpu,clocks.gr,clocks.mem,clocks_throttle_reasons.active",
             "--format=csv",
             "--loop-ms=500",
             f"--filename={output_file}"
@@ -95,22 +96,17 @@ def run_nsys_profiling(output_file, workload):
     elif api == "vulkan":
         trace_string = "vulkan,vulkan-annotations"
     elif api == "dx11":
-        trace_string = "dx11,dx11-annotations"
+        trace_string = "dx11,dx11-annotations,wddm"
     elif api == "dx12":
-        trace_string = "dx12,dx12-annotations"
+        trace_string = "dx12,dx12-annotations,wddm"
     
     # Build nsys command
     nsys_cmd = [
-        "nsys",
-        "profile",
-        "--output", output_file,
-        "--trace", trace_string,
-        "--gpu-metrics-device=0",
-        "--sample=process-tree",
-        "--sampling-frequency=1000",
-        "--stats=true",
-        "--force-overwrite=true"
-    ]
+    "nsys", "profile",
+    "--output", output_file,
+    "--trace=none",
+    "--force-overwrite=true"
+]
     
     # Add API-specific GPU workload tracing for detailed GPU activity
     if api == "opengl":
@@ -122,7 +118,6 @@ def run_nsys_profiling(output_file, workload):
     # dx11 doesn't need extra flag
     
     # Add the SPEC command with full path
-    spec_exe_full = os.path.join(SPEC_DIR, SPEC_EXE)
     nsys_cmd.extend(["--", spec_exe_full, "-w", workload])
     
     logger.debug(f"Running command: {' '.join(nsys_cmd)}")
