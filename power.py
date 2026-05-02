@@ -72,83 +72,28 @@ class Power(object):
             self.process = None
 
     def __del__(self):
-        """Destructor to ensure nvidia-smi closes on exception."""
-        try:
-            self.close_power()
-        except Exception:
-            pass
-
-
-BENCHMARKS = {
-    0: 'heaven',
-    1: 'valley',
-    2: 'superposition'
-}
-
-
-def run_benchmark(benchmark_id, test_name):
-    """Run the selected benchmark with power monitoring."""
-    name = BENCHMARKS[benchmark_id]
-    logger.info(f'=== Running {name} benchmark (test: {test_name}) ===')
-
-    test = Power()
-
-    try:
-        print("Starting power monitoring...")
-        test.open_power(test_name)
-        print(f"Power monitoring started, opening {name}...")
-        time.sleep(5)
-
-        if benchmark_id == 0:
-            h.open_heaven_benchmark()
-            print("Heaven opened, starting benchmark...")
-            time.sleep(5)
-            h.start_heaven_benchmark()
-            h.close_heaven_benchmark()
-
-        elif benchmark_id == 1:
-            v.open_valley_benchmark()
-            print("Valley opened, starting benchmark...")
-            time.sleep(5)
-            v.start_valley_benchmark()
-            v.close_valley_benchmark()
-
-        elif benchmark_id == 2:
-            sp.open_superposition_benchmark()
-            print("Superposition opened, starting benchmark...")
-            time.sleep(5)
-            sp.start_superposition_benchmark()
-            sp.close_superposition_benchmark()
-
-        print("Benchmark done, closing...")
-
-    except Exception as e:
-        logger.error(f'Benchmark failed: {e}')
-        print(f'ERROR: {e}')
-
-    finally:
-        test.close_power()
-        print("Done!")
-
+        """
+        Destructor in-case there is an exception so that nvidia-smi can close.
+        """
+        self.close_power()
 
 if __name__ == '__main__':
-    os.makedirs('data', exist_ok=True)
+    os.makedirs('data', exist_ok=True)  # create data dir if missing
 
-    parser = argparse.ArgumentParser(description="Power.py - Run GPU benchmark with nvidia-smi monitoring")
-    parser.add_argument(
-        '--test',
-        type=str,
-        default='test',
-        help='Name for the output CSV file (saved to data/<name>.csv)'
-    )
-    parser.add_argument(
-        '--benchmark',
-        type=int,
-        choices=[0, 1, 2],
-        default=0,
-        help='Benchmark to run: 0=heaven, 1=valley, 2=superposition'
-    )
+    parser = argparse.ArgumentParser(description="Power.py")
+    parser.add_argument('--test', type=str, default='test', help='Test name')
     args = parser.parse_args()
 
-    logger.info(f'Benchmark: {BENCHMARKS[args.benchmark]} | Test: {args.test}')
-    run_benchmark(args.benchmark, args.test)
+    print("Starting power monitoring...")
+    test = Power()
+    test.open_power(args.test)
+    print("Power monitoring started, opening heaven...")
+    time.sleep(5)
+    h.open_heaven_benchmark()
+    print("Heaven opened, starting benchmark...")
+    time.sleep(5)
+    h.start_heaven_benchmark()
+    print("Benchmark done, closing...")
+    h.close_heaven_benchmark()
+    test.close_power()
+    print("Done!")

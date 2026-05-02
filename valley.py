@@ -36,6 +36,58 @@ def wait_for_exe(exe_name: str):
                 logger.info(f'{exe_name} opened!')
                 return
         time.sleep(1)
+    logger.info(f'{exe_name} opened!!')
+
+
+def start_valley_benchmark():
+    """
+    Start Valley Benchmark for set amount of time,
+    then close it.
+    """
+    logger.debug("Clicking launcher Run button...")
+    attempts = 10
+    found = False
+    while attempts > 0 and not found:
+        try:
+            x, y = pyautogui.locateCenterOnScreen('images/run_valley.png', confidence=0.8)
+            autogui.click(x, y)
+            found = True
+        except pyautogui.ImageNotFoundException:
+            attempts -= 1
+            time.sleep(1)
+    if not found:
+        logger.error('Could not find the valley start button after 10 attempts.')
+        sys.exit()
+    time.sleep(1)
+
+    wait_for_exe('Valley.exe')
+
+    logger.info("Valley.exe detected. Giving it time to load...")
+    time.sleep(10) #FIXME
+
+    logger.info("Starting the benchmark...")
+    autogui.press('f9')
+
+    time.sleep(3*60) # It takes about 3 minutes #FIXME
+    attempts = 10
+    found = False
+    while attempts > 0 and not found:
+        try:
+            x, y = pyautogui.locateCenterOnScreen('images/done.png', confidence=0.8)
+            autogui.click(x, y)
+            found = True
+        except pyautogui.ImageNotFoundException:
+            attempts -= 1
+            time.sleep(3)
+    if not found:
+        logger.error('Could not find the heaven start benchmark after 10 attempts.')
+        sys.exit()
+
+    time.sleep(5) #FIXME
+    logger.info("Benchmark ~finished.")
+
+    logger.info("Closing all systems...")
+    subprocess.run('taskkill /f /im valley.exe /t')
 
 
 def open_valley_benchmark():
