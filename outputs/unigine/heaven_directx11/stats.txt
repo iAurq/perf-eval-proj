@@ -1,0 +1,4 @@
+Average power.draw [W] : 63.91014925373135
+Average utilization.gpu [%] : 61.28038379530917
+Average clocks.current.graphics [MHz] : 2003.3475479744136
+Average clocks.current.memory [MHz] : 6657.813432835821
