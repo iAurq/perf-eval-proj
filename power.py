@@ -39,7 +39,8 @@ class Power(object):
         """Start nvidia-smi as a background process."""
         try:
             self.process = subprocess.Popen(
-                "nvidia-smi --id=0 --query-gpu=timestamp,temperature.gpu,power.draw,utilization.gpu,clocks.current.graphics,clocks.current.memory,clocks.current.sm,clocks_throttle_reasons.active "
+                "nvidia-smi --id=0 --query-gpu=timestamp,temperature.gpu,temperature.memory,power.draw,utilization.gpu,utilization.memory," \
+                "memory.used,clocks_throttle_reasons.active "
                 f"--format=csv --loop-ms=500 --filename=data\\{file_name}.csv",
                 stdout=subprocess.PIPE,
                 shell=True,
