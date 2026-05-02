@@ -71,8 +71,8 @@ def start_superposition_benchmark():
     start_time = time.time()
     logger.info('Benchmark running (starts automatically)...')
 
-    logger.info('Waiting for benchmark to complete (~8 min)...')
-    time.sleep(8 * 60)
+    logger.info('Waiting for benchmark to complete (~5 min)...')
+    time.sleep(5 * 60)
 
 
 def close_superposition_benchmark():
