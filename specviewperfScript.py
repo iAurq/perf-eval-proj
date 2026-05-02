@@ -100,13 +100,17 @@ def run_nsys_profiling(output_file, workload):
     elif api == "dx12":
         trace_string = "dx12,dx12-annotations,wddm"
     
-    # Build nsys command
     nsys_cmd = [
-    "nsys", "profile",
-    "--output", output_file,
-    "--trace=none",
-    "--force-overwrite=true"
-]
+        "nsys",
+        "profile",
+        "--output", output_file,
+        "--trace", trace_string,
+        "--gpu-metrics-device=0",
+        "--sample=process-tree",
+        "--sampling-frequency=1000",
+        "--stats=true",
+        "--force-overwrite=true"
+    ]
     
     # Add API-specific GPU workload tracing for detailed GPU activity
     if api == "opengl":
@@ -160,6 +164,10 @@ def run_spec_with_nvidia_smi(workload, output_dir):
         text=True,
         cwd=SPEC_DIR
     )
+
+    logger.info("Workload complete. Cooling down for 60 seconds...")
+    time.sleep(60)
+    logger.info("Cooldown complete.")
     
     # Stop nvidia-smi
     smi_process.terminate()

@@ -2,13 +2,13 @@
 .idea/
 
 # Enviornment stuff
-.env
+*.env
 
 # Loggers
 *.log
 
 # Data stuff
-data/
+build/
 data/
 
 # python cache
@@ -16,3 +16,6 @@ __pycache__/
 
 # sqlite (huge files)
 *.sqlite
+
+# executables
+*.exe

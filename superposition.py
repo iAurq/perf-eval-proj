@@ -25,7 +25,7 @@ load_dotenv('tyler.env')
 # ─────────────────────────────────────────────
 # FIXED COORDINATES
 # ─────────────────────────────────────────────
-RUN_BUTTON = (1234, 664)
+RUN_BUTTON = (1378, 793)
 
 
 def wait_for_exe(exe_name: str):
@@ -38,24 +38,24 @@ def wait_for_exe(exe_name: str):
         time.sleep(1)
 
 
-def open_valley_benchmark():
-    """Open Valley Benchmark Launcher."""
+def open_superposition_benchmark():
+    """Open Superposition Benchmark Launcher."""
     current_dir = os.getcwd()
     logger.debug(f'Current Directory: {current_dir}')
-    valley_path = os.getenv('VALLEY_PATH') + '\\bin'
+    superposition_path = os.getenv('SUPERPOSITION_PATH') + '\\bin'
     try:
-        os.chdir(valley_path)
-        subprocess.Popen('browser_x86.exe -config ../data/launcher/launcher.xml', shell=True)
-        wait_for_exe('browser_x86.exe')
+        os.chdir(superposition_path)
+        subprocess.Popen('launcher.exe', shell=True)
+        wait_for_exe('launcher.exe')
         os.chdir(current_dir)
-        logger.info('Valley launcher opened!')
+        logger.info('Superposition launcher opened!')
     except Exception as e:
         logger.error(e)
         raise
 
 
-def start_valley_benchmark():
-    """Click Run, wait for Valley to load, press F9 to start benchmark."""
+def start_superposition_benchmark():
+    """Click Run, wait for Superposition to load, benchmark starts automatically."""
     logger.info('Waiting for launcher to fully render (3s)...')
     time.sleep(3)
 
@@ -63,27 +63,26 @@ def start_valley_benchmark():
     autogui.click(RUN_BUTTON[0], RUN_BUTTON[1])
     time.sleep(1)
 
-    wait_for_exe('Valley.exe')
-    logger.info('Valley.exe detected. Waiting for scene to load (10s)...')
-    time.sleep(10)
+    wait_for_exe('superposition.exe')
+    logger.info('superposition.exe detected. Waiting for scene to load (15s)...')
+    time.sleep(15)
 
-    logger.info('Pressing F9 to start benchmark...')
-    autogui.press('f9')
-    autogui.click(RUN_BUTTON[0], RUN_BUTTON[1])
+    # Superposition starts automatically, just start the timer
     start_time = time.time()
+    logger.info('Benchmark running (starts automatically)...')
 
-    logger.info('Waiting for benchmark to complete (~6 min)...')
-    time.sleep(6 * 60)
+    logger.info('Waiting for benchmark to complete (~8 min)...')
+    time.sleep(8 * 60)
 
 
-def close_valley_benchmark():
-    logger.info('Closing Valley...')
+def close_superposition_benchmark():
+    logger.info('Closing Superposition...')
     autogui.hotkey('alt', 'f4')
     logger.info('1 minute cooldown period...')
     time.sleep(60)
 
 
 if __name__ == '__main__':
-    open_valley_benchmark()
-    start_valley_benchmark()
-    close_valley_benchmark()
+    open_superposition_benchmark()
+    start_superposition_benchmark()
+    close_superposition_benchmark()

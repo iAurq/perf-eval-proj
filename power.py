@@ -7,6 +7,8 @@ import signal
 import subprocess
 
 import heaven as h
+import valley as v
+import superposition as sp
 
 # Logger setup
 logging.basicConfig(
@@ -17,25 +19,27 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
+console = logging.StreamHandler()
+console.setLevel(logging.DEBUG)
+console.setFormatter(logging.Formatter('%(asctime)s %(levelname)s: %(message)s'))
+logger.addHandler(console)
+
 
 class Power(object):
     """
     Class to start nvidia-smi.
     It's a class bc I don't want there to be conflicts
-    with the process variable
+    with the process variable.
     """
 
     def __init__(self):
-        """"""
         self.process = None
 
     def open_power(self, file_name):
-        """
-        Start nvidia-smi as a background process.
-        """
+        """Start nvidia-smi as a background process."""
         try:
             self.process = subprocess.Popen(
-                "nvidia-smi --id=0 --query-gpu=timestamp,temperature.gpu,power.draw,utilization.gpu,clocks.current.graphics,clocks.current.memory,clocks.current.sm"
+                "nvidia-smi --id=0 --query-gpu=timestamp,temperature.gpu,power.draw,utilization.gpu,clocks.current.graphics,clocks.current.memory,clocks.current.sm,clocks_throttle_reasons.active "
                 f"--format=csv --loop-ms=500 --filename=data\\{file_name}.csv",
                 stdout=subprocess.PIPE,
                 shell=True,
@@ -48,44 +52,103 @@ class Power(object):
             sys.exit()
         time.sleep(10)
 
-
     def close_power(self):
-        """
-        Close the nvidia-smi process.
-        It does this by sending a ctrl + c signal.
-        Bc I did shell=True, things act a bit odd.
-        The signal might sometimes affect the actual python process as well, terminating it early.
-        """
-        if self.process:
-            time.sleep(1) # FIXME 10
-            self.process.send_signal(signal.CTRL_BREAK_EVENT)
+        """Close the nvidia-smi process via CTRL+BREAK signal."""
+        if self.process and self.process.poll() is None:
+            time.sleep(1)
+            try:
+                self.process.send_signal(signal.CTRL_BREAK_EVENT)
+            except OSError:
+                pass
             logger.info('Giving time for csv dump')
-            time.sleep(10) #FIXME 60
+            time.sleep(10)
             self.process.terminate()
             try:
                 self.process.wait(timeout=5)
             except subprocess.TimeoutExpired:
                 logger.warning('Force closing')
                 self.process.kill()
-            # subprocess.Popen("taskkill /F /PID {pid} /T".format(pid=self.process.pid)) # Backup
             logger.info('Stopped nvidia-smi')
             self.process = None
 
     def __del__(self):
-        """
-        Destructor in-case there is an exception so that nvidia-smi can close.
-        """
-        self.close_power()
+        """Destructor to ensure nvidia-smi closes on exception."""
+        try:
+            self.close_power()
+        except Exception:
+            pass
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description="Power.py")
-    parser.add_argument('--test', type=str, default='test', help='Test name')
-    args = parser.parse_args()
+
+BENCHMARKS = {
+    0: 'heaven',
+    1: 'valley',
+    2: 'superposition'
+}
+
+
+def run_benchmark(benchmark_id, test_name):
+    """Run the selected benchmark with power monitoring."""
+    name = BENCHMARKS[benchmark_id]
+    logger.info(f'=== Running {name} benchmark (test: {test_name}) ===')
 
     test = Power()
-    test.open_power(args.test)
-    time.sleep(5)
-    h.open_heaven_benchmark()
-    h.start_heaven_benchmark()
-    h.close_heaven_benchmark()
-    test.close_power()
+
+    try:
+        print("Starting power monitoring...")
+        test.open_power(test_name)
+        print(f"Power monitoring started, opening {name}...")
+        time.sleep(5)
+
+        if benchmark_id == 0:
+            h.open_heaven_benchmark()
+            print("Heaven opened, starting benchmark...")
+            time.sleep(5)
+            h.start_heaven_benchmark()
+            h.close_heaven_benchmark()
+
+        elif benchmark_id == 1:
+            v.open_valley_benchmark()
+            print("Valley opened, starting benchmark...")
+            time.sleep(5)
+            v.start_valley_benchmark()
+            v.close_valley_benchmark()
+
+        elif benchmark_id == 2:
+            sp.open_superposition_benchmark()
+            print("Superposition opened, starting benchmark...")
+            time.sleep(5)
+            sp.start_superposition_benchmark()
+            sp.close_superposition_benchmark()
+
+        print("Benchmark done, closing...")
+
+    except Exception as e:
+        logger.error(f'Benchmark failed: {e}')
+        print(f'ERROR: {e}')
+
+    finally:
+        test.close_power()
+        print("Done!")
+
+
+if __name__ == '__main__':
+    os.makedirs('data', exist_ok=True)
+
+    parser = argparse.ArgumentParser(description="Power.py - Run GPU benchmark with nvidia-smi monitoring")
+    parser.add_argument(
+        '--test',
+        type=str,
+        default='test',
+        help='Name for the output CSV file (saved to data/<name>.csv)'
+    )
+    parser.add_argument(
+        '--benchmark',
+        type=int,
+        choices=[0, 1, 2],
+        default=0,
+        help='Benchmark to run: 0=heaven, 1=valley, 2=superposition'
+    )
+    args = parser.parse_args()
+
+    logger.info(f'Benchmark: {BENCHMARKS[args.benchmark]} | Test: {args.test}')
+    run_benchmark(args.benchmark, args.test)
